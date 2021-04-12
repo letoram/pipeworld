@@ -1,0 +1,39 @@
+-- entries marked foreground/background takes 6 values (fr, fg, fb, br, gb, bb)
+-- tui clients will use first set, terminal clients second, entries with an empty
+-- or nil table will retain whatever client default is
+
+return {
+ {}, -- special, 'alpha'
+ {}, -- primary (base color/foreground)
+ {}, -- secondary (alternate base color)
+ {}, -- background (default background)
+ {}, -- text (foreground+background)
+ {}, -- cursor (normal state)
+ {}, -- alt-cursor (scrollback/special state)
+ {}, -- highlight selection, active-word (foreground+background)
+ {}, -- label    : prompts, data labels (foreground+background)
+ {}, -- warning  : alert user but non-fatal (foreground+background)
+ {}, -- error    : alert user, requires action (foreground+background)
+ {}, -- alert    : alert user, immediate input / action (foreground+background)
+ {}, -- ref      : urls, file-paths, ... (foreground + background)
+ {}, -- inactive : inaccessible element (foreground + background)
+
+-- terminal clients below --
+ {}, -- black
+ {}, -- red
+ {}, -- green
+ {}, -- yellow
+ {}, -- blue
+ {}, -- magent
+ {}, -- cyan
+ {}, -- light-grey
+ {}, -- dark-grey
+ {}, -- light-red
+ {}, -- light-green
+ {}, -- light-blue
+ {}, -- light-magenta
+ {}, -- light-cyan
+ {}, -- white
+ {}, -- foreground
+ {}, -- background
+}
