@@ -4,7 +4,7 @@
 
 ## Misc / Assets
  - Proper static website with documentation
- - Separate API documentation (re-use arcan doc/*.lua format and add generator)
+ - Separate API documentation (re-use arcan doc/\*.lua format and add generator)
  - Logo + related icons
 
 ## afsrv\_terminal (cli.c)
@@ -38,6 +38,8 @@
  - xwayland/wayland clients create initial empty cells before the 'main one'
  - wayland cell needs a composited mode for dealing with x window management and subsurfaces (rt in builtin/wayland)
  - sometimes input grab remains on the wrong cell (often on creation/deletion)
+   reproduce: popup cell, cancel with background click, popup again -> input dead
+ - system popup fails on rclick
 
 ## Composition cell
  - more binpacking policies (tiling, stacking)

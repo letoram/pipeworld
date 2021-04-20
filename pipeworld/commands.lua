@@ -371,6 +371,64 @@ function(ctx)
 	row:select_index(#row.cells)
 end
 
+cmdtree["/swap/cell/left"] =
+function(ctx)
+	local row, cell = ensure_row_cell(ctx)
+	if not row then
+		return
+	end
+
+	local i = table.force_find_i(row.cells, cell)
+
+	if i == 1 then
+		return
+	end
+
+	local old = row.cells[i-1]
+	row.cells[i-1] = cell
+	row.cells[i] = old
+
+	row:invalidate(0, true, true)
+	row:select_index(i-1)
+end
+
+cmdtree["/swap/cell/right"] =
+function(ctx)
+	local row, cell = ensure_row_cell(ctx)
+	if not row then
+		return
+	end
+
+	local i = table.force_find_i(row.cells, cell)
+
+	if i == #row.cells then
+		return
+	end
+
+	local old = row.cells[i+1]
+	row.cells[i+1] = cell
+	row.cells[i] = old
+
+	row:invalidate(0, true, true)
+	row:select_index(i+1)
+end
+
+cmdtree["/swap/row/up"] =
+function(ctx)
+	local row = ensure_row(ctx)
+	if row.index > 1 then
+		row.wm:swap(row.index, row.index - 1)
+	end
+end
+
+cmdtree["/swap/row/down"] =
+function(ctx)
+	local row = ensure_row(ctx)
+	if row.index < #row.wm.rows then
+		row.wm:swap(row.index, row.index + 1)
+	end
+end
+
 cmdtree["/select/first"] =
 function(ctx)
 	local row = ensure_row(ctx)
