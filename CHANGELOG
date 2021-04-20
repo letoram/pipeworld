@@ -1,0 +1,3 @@
+0.1:
+ - expose target cell creation through the creation anchor point menu
+ - add commands for /swap/row/up /swap/row/down, /swap/cell/left, /swap/cell/right

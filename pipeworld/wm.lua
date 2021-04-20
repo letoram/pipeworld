@@ -116,6 +116,7 @@ end
 local function ensure_cfg(cfg)
 -- sanity-check cfg here and swap in defaults if something is missing
 	assert(cfg.input_grab, "config lacks an input grab handler")
+	assert(cfg.popup_grab, "config lacks a popup grab handler")
 	return cfg
 end
 
@@ -463,6 +464,14 @@ local function nudge_anchor(wm, dx, dy, dt, interp)
 	nudge_image(wm.anchor, dx, dy, dt, interp)
 end
 
+local function swap_rows(wm, r1_i, r2_i)
+	local old = wm.rows[r2_i]
+	wm.rows[r2_i] = wm.rows[r1_i]
+	wm.rows[r1_i] = old
+	wm:reindex()
+	wm:relayout(dt, interp)
+end
+
 return
 function(anchor, cfg)
 	assert(valid_vid(anchor))
@@ -502,6 +511,7 @@ function(anchor, cfg)
 	row_bg   = cfg.row_bg,
 	row_popup_bg = cfg.row_popup_bg,
 	detach_row = detach_row,
+	swap = swap_rows,
 	reindex = reindex_rows,
 
 -- swap the contents of one cell with another one

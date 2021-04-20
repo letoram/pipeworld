@@ -120,7 +120,7 @@ end
 
 local function set_label(row, message)
 -- build final string and repackage as format table
-	local fmt = row.cfg.label_format
+	local fmt = row:focused() and row.cfg.label_format or row.cfg.label_unfocus_format
 	local cell = row.cells[row.selected_index]
 
 -- ignore cell-less row, can happen during cleanup with asynch update
@@ -264,6 +264,7 @@ local function set_focused(row)
 	end
 
 	ctx.last_focus = row
+	row:set_label()
 	row.cells[row.selected_index]:focus()
 end
 
@@ -280,7 +281,9 @@ local function set_unfocused(row)
 	if not row.cells[row.selected_index] then
 		return
 	end
+
 	row.cells[row.selected_index]:unfocus()
+	row:set_label()
 end
 
 local function scale_row(row, fx, fy, dt, no_cd, no_anim)
