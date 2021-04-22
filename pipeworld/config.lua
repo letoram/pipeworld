@@ -28,6 +28,7 @@ return
 
 		passive =
 		{
+			opacity = 1.0,
 			opacity = 0.7,
 			row_bg = {64, 64, 64, 1},
 			row_border = {96, 96, 96, 1},
@@ -136,8 +137,9 @@ return
 -- against the next cell
 	cell_spacing = 8,
 
--- where applicable
-	cell_alpha_hint = 0.5,
+-- client suggested background alpha on focus/normal, 0..255 scale
+	cell_alpha_hint = 210,
+	cell_alpha_hint_unfocus = 120,
 
 	font = "DejaVuSansMono.ttf",
 	font_sz = 12,
@@ -149,6 +151,7 @@ return
 
 	label_format = "\\fDejaVuSansMono.ttf,12\\#000647",
 	label_maximized_format = "\\fDejaVuSansMono.ttf,14\\#ffffff",
+	label_unfocus_format = "\\fDejaVuSansMono.ttf,12\\#000647",
 
 -- defined in suppl.lua (suppl_ptn_expand)
 -- %a = address, %t = tag, %T title, if a % does not exist, the previous
