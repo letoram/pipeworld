@@ -37,8 +37,6 @@
  - input-scale factor wrong for mice in xwayland/wayland clients
  - xwayland/wayland clients create initial empty cells before the 'main one'
  - wayland cell needs a composited mode for dealing with x window management and subsurfaces (rt in builtin/wayland)
- - sometimes input grab remains on the wrong cell (often on creation/deletion)
-   reproduce: popup cell, cancel with background click, popup again -> input dead
  - system popup fails on rclick
 
 ## Composition cell
@@ -85,6 +83,7 @@
  - transitions between themes (e.g. day/night), interpolate in perceptual space
  - animated background (reflection plane, rain on glass)
  - external LED controller mapping
+ - dynamic cell text contrast (blur-background to luma-map)
 
 ## Wheel Input tool
  - combine with 3Dnav tool? (press-spin for stepping scale, ...)

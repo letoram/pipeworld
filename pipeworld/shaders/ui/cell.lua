@@ -26,6 +26,7 @@ return {
 /* opacity is used to indicate selection state */
 		if (obj_opacity < 1.0){
 			float avg = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
+			gl_FragColor = vec4(avg, avg, avg, obj_opacity);
 			gl_FragColor = vec4(avg, avg, avg, col.a);
 		}
 		else
