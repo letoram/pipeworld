@@ -146,6 +146,11 @@ local function setup_mouse_support()
 		motion = function(ctx, vid, dx, dy, x, y)
 		end,
 
+		drop = function(ctx)
+			wm.pan_block = false
+			wm.pan_deadline = CLOCK + 50
+		end,
+
 		dblclick = function(ctx)
 			run_action(bindings["bg_mouse_dblclick"])
 		end,
@@ -165,6 +170,9 @@ local function setup_mouse_support()
 			if #wm.rows == 0 then
 				return
 			end
+
+-- disable autopanning so it is possible to "look around" without repanning
+			wm.pan_block = true
 
 			local mstate = mouse_state()
 			local zoom = mstate.btns[MOUSE_RBUTTON]
@@ -230,7 +238,6 @@ function pipeworld(args)
 	cfg.on_wm_dirty = {}
 	cfg.input_grab = pipeworld_grab_input
 	cfg.popup_grab = pipeworld_popup_capture
-	cfg.meta_state = pipeworld_get_meta
 	cfg.keyboard = keyboard
 
 -- wallpaper / flair tools need this information
@@ -249,6 +256,10 @@ function pipeworld(args)
 -- tie the anchor to a new window manager, load it and populate with
 -- cell types, registering  them as part of the wm
 	wm = system_load("cellmgmt.lua")()(anchor, cfg)
+	wm.run_action =
+	function(...)
+		run_action(wm, ...)
+	end
 	wm.action_bindings =
 	function(wm, path)
 		run_action(bindings[path])
