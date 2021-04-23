@@ -2,7 +2,7 @@
 local insert_row = system_load("row.lua")()
 
 local function run_pan(ctx)
-	if ctx.pan_deadline > CLOCK then
+	if ctx.pan_deadline > CLOCK or ctx.pan_block then
 		return
 	end
 
