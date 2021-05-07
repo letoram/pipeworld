@@ -19,6 +19,14 @@ local function ensure_row(ctx, ...)
 	return row
 end
 
+local function run_row(ctx, fptr)
+	local row = ctx.last_focus
+	if not row then
+		return
+	end
+	return fptr(row)
+end
+
 local function ensure_row_cell(ctx, scope, ...)
 	local row = ctx.last_focus
 	if not row then
@@ -147,6 +155,68 @@ cmdtree["/invalidate/all"] =
 function(ctx)
 	for _, row in ipairs(ctx.rows) do
 		row:invalidate(0, true, true)
+	end
+end
+
+local function enum_group(ctx)
+	local row = ensure_row(ctx)
+	if not row then
+		return
+			function()
+			end
+	end
+
+	local i = 1
+	local group_parent = row.group_parent
+
+	if group_parent then
+		i = row.group_parent.index
+	end
+
+	return function()
+		if not ctx.rows[i] or (ctx.rows[i].detached and ctx.rows[i] ~= group_parent) then
+			return nil
+		else
+			local res = ctx.rows[i]
+			i = i + 1
+			return res
+		end
+	end
+end
+
+cmdtree["/scale/group/toggle"] =
+function(ctx)
+	for row in enum_group(ctx) do
+		if row.scale_copy then
+			row:scale(row.scale_copy[1], row.scale_copy[1])
+			row.scale_copy = nil
+		else
+			row.scale_copy = {row.scale_factor[1], row.scale_factor[2]}
+			row:scale(1, 1)
+		end
+	end
+end
+
+cmdtree["/scale/group/set"] =
+function(ctx, sx, y)
+	for row in enum_group(ctx) do
+		row:scale(sx, sy)
+	end
+end
+
+cmdtree["/scale/group/decrement"] =
+function(ctx, val)
+	val = math.clamp(val and val or 0.1, 0.001, 0.5);
+	for row in enum_group(ctx) do
+		row:scale(row.scale_factor[1] - val, row.scale_factor[2] - val)
+	end
+end
+
+cmdtree["/scale/group/increment"] =
+function(ctx, val)
+	val = math.clamp(val and val or 0.1, 0.001, 0.5);
+	for row in enum_group(ctx) do
+		row:scale(row.scale_factor[1] + val, row.scale_factor[2] + val)
 	end
 end
 
@@ -438,6 +508,11 @@ function(ctx)
 	row:select_index(1)
 end
 
+cmdtree["/link/row"] =
+function(ctx, state)
+	run_row(ctx, function(row) row:toggle_linked(state) end)
+end
+
 cmdtree["/select/down"] =
 function(ctx)
 	local row = ensure_row(ctx)
@@ -510,6 +585,11 @@ function(ctx)
 	end
 
 	row:destroy()
+end
+
+cmdtree["/toggle/anchor/row"] =
+function(ctx)
+	ctx:toggle_linked(row)
 end
 
 cmdtree["/resynch"] =
