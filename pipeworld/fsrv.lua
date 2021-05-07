@@ -177,6 +177,7 @@ local function basic_client(cell, source, status, ...)
 
 	apply_default_cell(new, vid)
 	target_updatehandler(vid, pipeworld_segment_handler(new, {}))
+	new:unfocus()
 
 	return new
 end
@@ -281,7 +282,7 @@ local function fsrv_dead(cell, source, status)
 		cell:set_error(status.last_words)
 	end
 
-	if cell.autodelete then
+	if cell.autodelete or cell.row.autodelete then
 		cell.row:delete_cell(cell)
 	end
 end

@@ -310,6 +310,8 @@ function pipeworld(args)
 	for _, v in ipairs(tool_hooks) do
 		v(wm, "create")
 	end
+
+	wm:nudge_anchor(10, 10)
 end
 
 function pipeworld_get_symtable()

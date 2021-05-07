@@ -97,7 +97,9 @@ local function relayout_rows(ctx, dt)
 
 	for _, v in ipairs(ctx.rows) do
 		reset_image_transform(v.bg, MASK_POSITION)
-		move_image(v.bg, 0, cfg.row_spacing, dt, cfg.animation_tween)
+		if not v.detached then
+			move_image(v.bg, 0, cfg.row_spacing, dt, cfg.animation_tween)
+		end
 	end
 
 	local row = ctx.last_focus
@@ -405,14 +407,25 @@ local function add_row(ctx, ...)
 end
 
 -- ensure that the address fields and labels are correct after reordering
+-- and allow groups to be split off into independetly anchored groups
 local function reindex_rows(ctx)
+	local group_parent = ctx.rows[1]
+
 	for i,v in ipairs(ctx.rows) do
+
+-- first group can't be detached from the global anchor, this might happen
+-- if we swap across groups
 		if i == 1 then
+			link_image(v.bg, ctx.anchor)
+			v.detached = nil
+		elseif v.detached then
+			group_parent = v
 			link_image(v.bg, ctx.anchor)
 		else
 			link_image(v.bg, ctx.rows[i-1].bg, ANCHOR_LL)
 		end
 
+		v.group_parent = group_parent
 		v.index = i
 		v:set_label()
 	end
@@ -460,11 +473,18 @@ local function pan_to(wm, tgt, force)
 end
 
 local function nudge_anchor(wm, dx, dy, dt, interp)
-	reset_image_transform(wm.anchor)
-	nudge_image(wm.anchor, dx, dy, dt, interp)
+	local anchor = wm.anchor
+
+-- if the currently selected row is detached, we move that row's anchor instead
+	if wm.last_focus and wm.last_focus.group_parent ~= wm.rows[1] then
+		anchor = wm.last_focus.group_parent.bg
+	end
+
+	reset_image_transform(anchor)
+	nudge_image(anchor, dx, dy, dt, interp)
 end
 
-local function swap_rows(wm, r1_i, r2_i)
+local function swap_rows(wm, r1_i, r2_i, dt, interp)
 	local old = wm.rows[r2_i]
 	wm.rows[r2_i] = wm.rows[r1_i]
 	wm.rows[r1_i] = old
@@ -494,6 +514,7 @@ function(anchor, cfg)
 	tags     = {},
 	w = VRESW,
 	h = VRESH,
+	group_count = 1,
 	resize   = ctx_resize,
 	set_interactive = set_interactive,
 -- counter used for reset() state/content tracking

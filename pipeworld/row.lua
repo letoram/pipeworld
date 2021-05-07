@@ -265,6 +265,7 @@ local function set_focused(row)
 
 	ctx.last_focus = row
 	row:set_label()
+	order_image(row.bg, row.wm.group_count * 10)
 	row.cells[row.selected_index]:focus()
 end
 
@@ -282,6 +283,7 @@ local function set_unfocused(row)
 		return
 	end
 
+	order_image(row.bg, 10)
 	row.cells[row.selected_index]:unfocus()
 	row:set_label()
 end
@@ -693,6 +695,48 @@ local function row_mouse(ctx, row)
 	mouse_addlistener(row.mouse_handler)
 end
 
+-- sweep backwards and find the first index that is not detached
+local function find_group_parent(row)
+	row.group_parent = row
+	local ind = row.index
+
+	while ind > 1 do
+		if row.wm.rows[ind].detached then
+			return row.wm.rows[ind]
+		end
+		ind = ind - 1
+	end
+
+	return row.wm.rows[ind]
+end
+
+local function toggle_linked(row, state, dt, interp)
+	if row.index == 1 then
+		return
+	end
+
+	local detached = row.detached
+	state = state and state or not row.detached
+	row.detached = state
+
+	local bg = image_surface_resolve(row.bg)
+	local anch = image_surface_resolve(row.wm.anchor)
+
+-- only move / reposition if the actual anchor state changes
+	if row.detached ~= detached and row.detached then
+		relink_image(row.bg, row.wm.anchor)
+		row.group_parent = find_group_parent(row)
+		row.wm.group_count = row.wm.group_count + 1
+		row.wm:relayout(dt, interp)
+
+	elseif not row.detached and detached then
+		row.wm.group_count = row.wm.group_count - 1
+		relink_image(row.bg, row.wm.rows[row.index-1].bg, ANCHOR_LL)
+		row.group_parent = find_group_parent(row)
+		row.wm:relayout(dt, interp)
+	end
+end
+
 local function select_cell(row, cell)
 	cell.row:select_index(table.force_find_i(row.cells, cell))
 end
@@ -778,6 +822,7 @@ return function(ctx, ind, cell, ...)
 		delete_cell = delete_cell,
 		add_cell = add_cell,
 		destroy = destroy_row,
+		toggle_linked = toggle_linked,
 		index_to_label = function(row)
 			return index_to_label(row.index)
 		end,

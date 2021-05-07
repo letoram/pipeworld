@@ -11,6 +11,15 @@ local function on_unfocus(cell)
 	target_displayhint(cell.vid, 0, 0, TD_HINT_UNFOCUSED)
 end
 
+local function set_visual_focus(cell)
+	if (cell.cfg.cell_alpha_hint ~= cell.cfg.cell_alpha_hint_unfocus) then
+		target_graphmode(cell.vid, 1, cell.cfg.cell_alpha_hint)
+		target_graphmode(cell.vid, 0)
+	end
+
+	target_displayhint(cell.vid, 0, 0, 0)
+end
+
 local function on_focus(cell)
 	if not valid_vid(cell.vid, TYPE_FRAMESERVER) then
 		return
@@ -30,12 +39,7 @@ local function on_focus(cell)
 		target_input(cell.vid, iotbl)
 	end)
 
-	if (cell.cfg.cell_alpha_hint ~= cell.cfg.cell_alpha_hint_unfocus) then
-		target_graphmode(cell.vid, 1, cell.cfg.cell_alpha_hint)
-		target_graphmode(cell.vid, 0)
-	end
-
-	target_displayhint(cell.vid, 0, 0, 0)
+	set_visual_focus(cell)
 end
 
 local function on_rehint(cell)
@@ -134,4 +138,10 @@ return function(cell, vid)
 		return on_unfocus(...)
 	end
 	cell.reset = on_reset
+
+	if cell.focused then
+		set_visual_focus(cell)
+	else
+		on_unfocus(cell)
+	end
 end
