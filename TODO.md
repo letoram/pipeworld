@@ -27,6 +27,7 @@
  - cell contents pan/zoom (without changing global / row scale)
  - work logging / IPC to behave like in durden/safespaces
  - draw to resize or slice
+ - collapse row into 'book' mode (single-column cell)
 
 ## Video
  - downsample shader (content preserving)
@@ -38,6 +39,7 @@
  - xwayland/wayland clients create initial empty cells before the 'main one'
  - wayland cell needs a composited mode for dealing with x window management and subsurfaces (rt in builtin/wayland)
  - system popup fails on rclick
+ - (a) (b) (c) - deletion on left (e.g. a or b) does not seem to hand-over focus on right-of element
 
 ## Composition cell
  - more binpacking policies (tiling, stacking)
@@ -64,6 +66,7 @@
 
 ## CLI/TUI cell
  - support completion / integration
+ - attach subwindow in current cell (popup, list, ...)
 
 ## External Cell
  - bond\_target across row (see pipe system command)
@@ -97,17 +100,11 @@
  - build from capture cell with other arguments to afsrv\_decode
  - type helper that deals with both file picking and external url/media source enum
 
-## Icon Cell
- - Reference icon that mutates back and forth between another factory (e.g. target-cell) and itself
- - Can also spawn multiple instances of the referenced target as new cells/rows
- - Persistance from config file? (or just rely on autorun?)
-
 ## Expression cell
  - BUG: single symbol resolving to function call without () says missing function/sym
  - dynamic command loading / reloading
  - generate API reference from cells/api/...
  - document grammar..
- - 'destroy' on expression mutated cell reverting to prefilled expression
  - mouse picking (meta + click cell -> lookup and add)
  - auto-parent when ) is unbalanced, e.g. 1+2*4 ) -> 1+2*(4) -> 1+2*(4)) -> 1+2(*4))
  - highlight error / token
