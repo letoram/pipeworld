@@ -828,6 +828,19 @@ local function add_result(cell, val)
 	end
 end
 
+local function pnumf(val, div)
+	if val == 0 then
+		return "0"
+	end
+	val = val / div
+	local a, b = math.modf(val)
+	if b == 0.0 then
+		return tostring(a)
+	else
+		return string.format("%.4f", val)
+	end
+end
+
 return
 function(row, cfg, preset, commit, ns)
 
@@ -849,22 +862,27 @@ function(row, cfg, preset, commit, ns)
 
 	cell:set_state("inactive")
 
--- use TAB to step through formatting
+-- use TAB to step through formatting, these should really be exposed
+-- as a menu as well so that a larger set or the stepping order can be
+-- controlled as this grows
 	cell.number_formats = {
 		{
 			label = "(.4f) ",
+			name = "float_lim",
 			process = function(v)
 				return string.format("%.4f", v)
 			end,
 		},
 		{
 			label = "(f) ",
+			name = "float",
 			process = function(v)
 				return string.format("%f", v)
 			end,
 		},
 		{
 			label = "(0x) ",
+			name = "hex",
 			process = function(v)
 				local i, _ = math.modf(v)
 				return string.format("%x", i)
@@ -872,9 +890,31 @@ function(row, cfg, preset, commit, ns)
 		},
 		{
 			label = "(dec) ",
+			name = "decimal",
 			process = function(v)
 				return string.format("%d", v)
 			end
+		},
+		{
+			label = "(KiB) ",
+			name = "kilobytes",
+			process = function(v)
+				return pnumf(v, 1024)
+			end,
+		},
+		{
+			label = "(MiB) ",
+			name = "megabytes",
+			process = function(v)
+				return pnumf(v, 1024 * 1024)
+			end,
+		},
+		{
+			label = "(GiB) ",
+			name = "gigabytes",
+			process = function(v)
+				return pnumf(v, 1024 * 1024 * 1024)
+			end,
 		}
 	}
 	cell.format_index = 1

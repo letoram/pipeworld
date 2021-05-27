@@ -202,11 +202,11 @@ function(ch, tok, state, ofs)
 			return lex_num
 		end
 
-	elseif ch == "b" then
+	elseif ch == "b" and not state.number_hex then
 		if state.number_bin or
 			#state.buffer ~= 1 or
 			string.sub(state.buffer, 1, 1) ~= "0" then
-			state.error = "(num) invalid binary constant (0b[01]n expected"
+			state.error = "(num) invalid binary constant (0b[01]n expected)"
 			state.error_ofs = ofs
 			return lex_error
 		else
