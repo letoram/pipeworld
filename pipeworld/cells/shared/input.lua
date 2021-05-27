@@ -54,8 +54,14 @@ local function update_str(cell, msg)
 	end
 
 	cell.last_box_w = cell.box_w
-	cell.box_w = math.floor(
-		(math.floor(cell.label_w / cell.cfg.min_w) + 1) * cell.cfg.min_w)
+
+-- set the actual box_w to the content width
+	if cell.cfg.min_w == 0 then
+		cell.box_w = cell.label_w + 4
+	else
+		cell.box_w = math.floor(
+			(math.floor(cell.label_w / cell.cfg.min_w) + 1) * cell.cfg.min_w)
+	end
 
 -- don't relayout every input, but grow/shrink the box with a decent margin,
 -- interestingly enough the HEIGHT can oscillate from rounding / scaling issues
