@@ -15,9 +15,9 @@ symtable,
 
 -- mouse actions (invalidate/all is used to cancel animations)
 --	["bg_mouse_wheel_up"] = {group = {{"/scale/all/increment", 0.1}, {"/invalidate/all"}}},
-	["bg_mouse_wheel_up"] = {group = {{"/scale/all/increment", 0.1}}},
-	["bg_mouse_wheel_down"] = {group = {{"/scale/all/decrement", 0.1}}},
-	["bg_mouse_dblclick"] = {group = {{"/scale/all/toggle"}}},
+	["bg_mouse_wheel_up"] = {group = {{"/scale/group/increment", 0.1}}},
+	["bg_mouse_wheel_down"] = {group = {{"/scale/group/decrement", 0.1}}},
+	["bg_mouse_dblclick"] = {group = {{"/scale/group/toggle"}}},
 	["spawn_anchor_click"] = "/insert/row/expression",
 	["spawn_anchor_rclick"] = "/popup/insert_menu",
 	["row_spawn_anchor_click"] = "/append/row/expression",
@@ -50,9 +50,12 @@ symtable,
 	["m1_m2_BACKSPACE"] = "/delete/row",
 	["m1_s"] = "/popup/cursor/sysexpr",
 	["m1_d"] = "/popup/cursor/cellexpr",
+	["m1_a"] = "/popup/cursor/rowexpr",
 	["m1_RETURN"] = {"/insert/row/expression"},
 	["m1_r"] = "/reset/cell",
 	["m1_m2_r"] = "/reset/anchor",
+
+  ["m1_z"] = "/link/row",
 
 -- size modifies scale factor for presentation (forced)
 	["m1_F1"] = {group = {{"/scale/row/set", 0.2, 0.2}}},
