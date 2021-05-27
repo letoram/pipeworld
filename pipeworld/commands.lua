@@ -346,6 +346,20 @@ for _, v in ipairs(lst) do
 	end
 end
 
+cmdtree["/popup/cursor/rowexpr"] =
+function(ctx)
+	local pr, pc = ensure_row_cell(ctx)
+	if not pr or not pc then
+		return
+	end
+
+	local cell = ctx:popup_cell("Row", "expression", nil, false, "_")
+	if cell then
+		cell.eval_proxy = pc
+		cell.destroy_on_escape = true
+	end
+end
+
 cmdtree["/popup/cursor/cellexpr"] =
 function(ctx)
 	local pr, pc = ensure_row_cell(ctx)
