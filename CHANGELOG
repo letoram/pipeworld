@@ -1,6 +1,7 @@
 0.1:
  - expose target cell creation through the creation anchor point menu
  - add commands for /swap/row/up /swap/row/down, /swap/cell/left, /swap/cell/right
+ - terminal cell opens up listening endpoints by default, new clients attach on the same row
 
 minor:
  - temporarily disable autopan when WM anchor is being dragged around
