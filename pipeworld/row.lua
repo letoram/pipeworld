@@ -239,7 +239,7 @@ local function row_recolor(row, state)
 	row.decor:border_color(unpack(ctbl.row_border))
 
 	if row.cfg.row_shader then
-		pipeworld_shader_setup(row.bg, "ui", row.cfg.row_shader, state)
+		row.bgshid = pipeworld_shader_setup(row.bg, "ui", row.cfg.row_shader, state)
 	end
 
 	row.state = state
@@ -352,7 +352,7 @@ local function relayout(row, dt, interp)
 	local orig = image_surface_properties(row.bg)
 
 	local x = (cfg.row_border + cfg.row_pad[2]) * decor_scale_x(row) + cfg.cell_border
-	local y = cfg.row_border * decor_scale_y(row) + pad_y + cfg.cell_border
+	local y = (cfg.row_border + cfg.row_pad[1]) * decor_scale_y(row) + pad_y + cfg.cell_border
 	local sb_x = 2 * cfg.cell_border
 	local sb_y = 2 * cfg.cell_border
 
@@ -367,6 +367,8 @@ local function relayout(row, dt, interp)
 	end
 
 	for i, v in ipairs(row.cells) do
+-- then the content
+		v:resize(dt, interp)
 -- the decoration border isn't actually scaled in order to show client state
 -- colors clearly, and content size takes both cells scale factor and row scale
 -- factor into account
@@ -379,8 +381,6 @@ local function relayout(row, dt, interp)
 -- anchor deals with bg resizing
 		v:set_anchor(row.bg, ANCHOR_UL, x, y, w, h, dt, interp)
 
--- then the content
-		v:resize(dt, interp)
 		x = x + w + sb_x + (i == #row.cells and 0 or 1) * spacing
 	end
 
@@ -389,7 +389,7 @@ local function relayout(row, dt, interp)
 -- the current 'bind to scale' edge and hierarchy seems to work well enough but has a perf
 -- penalty that scales with the number of rows, the engine also only caches discrete ticks.
 	local dw = math.ceil((cfg.row_border * 2 + cfg.row_pad[4]) * decor_scale_x(row) + x)
-	local dh = math.ceil(((cfg.row_border * 2 + cfg.row_pad[3]) + pad_y) * decor_scale_y(row) + max_cell_h)
+	local dh = math.ceil((cfg.row_border * 2 + cfg.row_pad[3] + y) * decor_scale_y(row) + max_cell_h)
 
 	resize_image(row.bg, dw, dh, dt, interp)
 	row.bg_height = dh
