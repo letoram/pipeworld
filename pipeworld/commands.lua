@@ -606,6 +606,16 @@ function(ctx)
 	ctx:toggle_linked(row)
 end
 
+-- this should be automatically invoked from pipeworld_display_state
+cmdtree["/resize/canvas"] =
+function(ctx, neww, newh, vppcm, hppcm)
+	local cfg = ctx.cfg
+	if cfg.wallpaper_update then
+		cfg.wallpaper_update(cfg.wallpaper, cfg, neww, newh)
+	end
+	ctx:resize(neww, newh)
+end
+
 cmdtree["/resynch"] =
 function(ctx)
 	local row = ensure_row(ctx)
