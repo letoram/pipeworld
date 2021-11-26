@@ -152,7 +152,7 @@ local function resize(cell, dt, interp)
 
 -- skip the animations, couldn't get them to look decent
 	resize_image(cell.caret, 1, h) -- dt, interp)
-	cell.old_handlers.resize(cell) -- , dt, interp)
+	resize_image(cell.box, w, h)
 end
 
 local function unfocus(cell)
@@ -215,17 +215,17 @@ function(id, row, cfg)
 	cell.lock_input = input_lock
 	cell.force_str = force_str
 
-	link_image(cell.box, cell.bg, ANCHOR_UL, ANCHOR_SCALE_WH)
 	link_image(cell.line, cell.bg)
+	link_image(cell.box, cell.line, ANCHOR_UL)
 	link_image(cell.caret, cell.bg)
 	show_image({cell.caret, cell.line})--, cell.box})
 
 	image_inherit_order({cell.box, cell.caret, cell.line}, true)
 
 -- resolve through new anchor chain
-	order_image(cell.box, 1)
 	order_image(cell.caret, 3)
 	order_image(cell.line, 2)
+	order_image(cell.box, -1)
 
 -- we want to be able to click the text as a way of moving the caret
 -- (binary search with text_dimensions) but until that is implemented,
