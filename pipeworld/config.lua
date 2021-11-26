@@ -40,7 +40,10 @@ return
 			cell_completed = {210, 56, 108, 1},
 			input_background = {0, 0, 0, 0.5},
 			selection_bg = {32, 127, 32, 1}
-		}
+		},
+
+		cursor_outline_bright = {32, 32, 32},
+		cursor_outline_dark   = {164, 164, 164}
 	},
 
 -- [cell_name _ colorscheme].lua will be loaded from colorschemes/

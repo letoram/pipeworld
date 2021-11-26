@@ -68,7 +68,31 @@ local blur_mix = [[
 	uniform vec2 offset;
 	uniform vec2 obj_output_sz;
 
-	void main()
+vec3 rgb2hsv(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+vec3 hsv2rgb(vec3 c)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+float smoothstep(float e0, float e1, float e)
+{
+	float t = clamp((e - e0) / (e1 - e0), 0.0, 1.0);
+	return t * t * (1.0 - 2.0 * t);
+}
+
+void main()
 	{
 		vec3 col = texture2D(map_tu0, texco).rgb;
 		vec2 uv = gl_FragCoord.xy / obj_output_sz;
@@ -77,7 +101,10 @@ local blur_mix = [[
 		vec4 shadow = texture2D(map_tu1, uv).rgba;
 		float fact = 1.0 - shadow.a;
 
-		col = col.rgb - (shadow.a * fact);
+		vec3 pc = rgb2hsv(col);
+		float sv = -smoothstep(0.2, 0.5, pc.b) * 2.0 - 1.0;
+
+		col = col.rgb - (shadow.a * fact * sv);
 		gl_FragColor = vec4(col.rgb, 1.0);
 	}
 ]]
@@ -129,6 +156,7 @@ local boxblur_frag = [[
 	uniform float sigma;
 	uniform vec2 obj_output_sz;
 	uniform float weight;
+	uniform vec3 shadow_color;
 	varying vec2 texco;
 
 vec2 error_function(vec2 x)
@@ -182,10 +210,61 @@ void main()
 	vec2 high = obj_output_sz;
 
 	float a = rounded_box_shadow(vec2(0.0, 0.0), high, vert, sigma, radius);
-
-	gl_FragColor = vec4(vec3(0.0), max(obj_opacity * weight * a, 0.0));
+	gl_FragColor = vec4(shadow_color, max(obj_opacity * weight * a, 0.0));
 }
 ]]
+
+--[[
+vec3 rgb2hsv(vec3 c)
+	{
+		vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+		vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+		vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+		float d = q.x - min(q.w, q.y);
+		float e = 1.0e-10;
+
+		return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x / e), q.x);
+	}
+
+  vec3 hsv2rgb(vec3 c)
+	{
+		vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+		vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+		return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+	}
+}
+]]--
+
+local mouse_shid = build_shader(nil,
+[[
+	uniform sampler2D map_tu0;
+	uniform sampler2D map_tu1;
+	varying vec2 texco;
+	uniform vec3 outline_bright;
+	uniform vec3 outline_dark;
+	uniform float width;
+	uniform float height;
+	uniform vec4 remap;
+
+	void main()
+	{
+		vec4 shape = texture2D(map_tu0, texco);
+
+    // copied from row.lua
+		float txco_s = remap.z + remap.x * gl_FragCoord.x / width;
+		float txco_t = remap.w + remap.y * (1.0 - (gl_FragCoord.y / height));
+
+		vec4 col = texture2D(map_tu1, vec2(txco_s, txco_t));
+
+		float luma = (shape.r + shape.g + shape.b) / 3.0;
+		float intens = (col.r + col.g + col.b) / 3.0;
+		float pct = smoothstep(0.3, 0.4, intens);
+		vec3 outline = mix(outline_dark, outline_bright, pct);
+
+		gl_FragColor = vec4(mix(outline, col.rgb, luma), shape.a);
+	}
+]], "CURSOR")
 
 local events = {}
 events.create =
@@ -202,6 +281,16 @@ function(wm)
 		delete_image(glow)
 		return
 	end
+
+	local b = wm.cfg.colors.cursor_outline_bright;
+	local d = wm.cfg.colors.cursor_outline_dark;
+	local f = 1.0 / 255.0;
+
+	shader_uniform(mouse_shid, "remap", "ffff", 1.0, 1.0, 0.0, 0.0);
+	shader_uniform(mouse_shid, "width", "f", VRESW);
+	shader_uniform(mouse_shid, "height", "f", VRESH);
+	shader_uniform(mouse_shid, "outline_dark", "fff", d[1] * f, d[2] * f, d[3] * f);
+	shader_uniform(mouse_shid, "outline_bright", "fff", b[1] * f, b[2] * f, b[3] * f);
 
 	wm.tool_flair = {
 		glow = glow,
@@ -223,7 +312,7 @@ function(wm)
 	shader_uniform(boxblur, "shadow_color", "fff", 0.0, 0.0, 0.0)
 
 -- adjust for non-uniform shadow/glow
-	shader_uniform(boxblur, "shadow_offset", "ffff", 10.0, 10.0, 10.0, 10.0)
+	shader_uniform(boxblur, "shadow_offset", "ffff", 12.0, 12.0, 12.0, 12.0)
 
 -- so for the basic glow texture we need a 1:1 size match between the two
 -- linktargets or there will not be enough resolution to 'fit' the others
@@ -313,10 +402,23 @@ function(wm, dx, dy)
 	local ox = txcos[1]
 	local oy = txcos[2]
 
--- shift the range and base offset to match parallax panning
-	if wm.rows[1] and wm.rows[1].bgshid then
-		shader_uniform(wm.rows[1].bgshid, "remap", "ffff", fx, fy, ox, oy)
+-- shift the range and base offset to match parallax panning, need to do
+-- this both on the selected row and on the non-selected one as they have
+-- different 'states'
+	local active = wm.last_focus
+	local passive = active == wm.rows[1] and wm.rows[2] or wm.rows[1]
+
+	if active and active.bgshid then
+		shader_uniform(active.bgshid, "remap", "ffff", fx, fy, ox, oy)
 	end
+
+	if passive and passive.bgshid then
+		shader_uniform(passive.bgshid, "remap", "ffff", fx, fy, ox, oy)
+	end
+
+	shader_uniform(mouse_shid, "remap", "ffff", fx, fy, ox, oy)
+	shader_uniform(mouse_shid, "width", "f", VRESW)
+	shader_uniform(mouse_shid, "height", "f", VRESH)
 end
 
 local function event_handler(wm, event, ...)
@@ -355,6 +457,16 @@ local function update_wallpaper(wm, vid)
 	for _,row in ipairs(wm.rows) do
 		set_image_as_frame(row.bg, wp, 2)
 	end
+
+-- setting cursor flair
+	local mstate = mouse_state()
+
+	image_framesetsize(mstate.cursor, 3, FRAMESET_MULTITEXTURE)
+	set_image_as_frame(mstate.cursor, wp, 2)
+	image_shader(mstate.cursor, "CURSOR")
+	events.pan(wm, 0, 0)
+	local props = image_storage_properties(mstate.cursor)
+--	resize_image(mstate.cursor, props.width * 0.25, props.height * 0.25)
 end
 
 local function wallpaper_set(wm, ref)
