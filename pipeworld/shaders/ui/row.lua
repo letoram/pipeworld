@@ -40,7 +40,7 @@ return {
 ]],
 	uniforms = {
 		inactive = {
-			label = 'Active',
+			label = 'Inactive',
 			utype = 'b',
 			default = false,
 		},
@@ -79,6 +79,6 @@ return {
 	},
 	states = {
 		active = {uniforms = { inactive = false } },
-		inactive = {uniforms = { inactive = true } },
+		passive = {uniforms = { inactive = true } },
 	}
 };
