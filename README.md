@@ -102,7 +102,7 @@ file.
 
 To see most of the currently available commands:
 
-		grep cmdtree commands.lua
+    grep cmdtree commands.lua
 
 The commands and tools will be documented when the project is a bit more mature
 and the set has stabilized.
@@ -246,28 +246,28 @@ That can also be bound as a menu entry, keybinding or similar :
 ## Target Cell
 
 Arcan has a facility for defining external programs that can be launched, and
-how those are setup. See the 'arcan\_db' tool mainpage for more details, but
-the short version is:
+how those are setup. See the 'arcan\_db' tool manpage for more details, but the
+short version is:
 
     arcan_db add_target BIN mytool /usr/bin/mytool arg1 arg2
-		arcan_db add_config mytool test arg3 arg4
+    arcan_db add_config mytool test arg3 arg4
 
-		{"/insert/row/target", "mytool", "test"}
+    {"/insert/row/target", "mytool", "test"}
 
 Which would spawn a new process with an inherited connection through
 '/usr/bin/mytool arg1 arg2 arg3 arg4'. This is only for applications that use
-Arcans native client APIs (SHMIF and TUI).
-tool, such as arcan-wayland:
+Arcans native client APIs (SHMIF and TUI). This includes other protocol
+bridging tools, such as arcan-wayland (again using arcan\_db):
 
+    add_target BIN weston-terminal /usr/bin/arcan-wayland -exec weston-terminal
+    add_target BIN chromium-x11wl /usr/bin/arcan-wayland -exec-x11 chromium
     add_target BIN chromium-x11 /usr/bin/arcan_xwm -Xarcan chromium
-		add_target BIN weston-terminal /usr/bin/arcan-wayland -exec weston-terminal
-		add_target BIN chromium-x11wl /usr/bin/arcan-wayland -exec-x11 chromium
 
 ## CLI mode
 
 The external CLI is part of Arcan, and while it looks like a normal 'terminal'
-prompt, it is not. The set of built-in commands it provides is limited, and
-it is mainly useful for launching other programs.
+prompt, it is not. The set of built-in commands it provides is limited, and it
+is mainly useful for launching other programs.
 
 The 'cd' command changes the current directory, while 'mode' changes execution
 mode.  This is important as different clients have different needs from its
@@ -276,14 +276,14 @@ environment in order to connect properly.
 The different modes are:
 
     x11
-		wayland
-		vt100 (will wrap through a terminal emulator)
-		arcan
+    wayland
+    vt100 (will wrap through a terminal emulator)
+    arcan
 
 e.g.
 
     mode x11
-		chromium
+    chromium
 
 Would start chromium under X11.
 
