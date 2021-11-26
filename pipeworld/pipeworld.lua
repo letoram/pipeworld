@@ -431,7 +431,7 @@ function pipeworld_input(iotbl)
 		return
 	end
 
-	-- translate / resolve and forward to active cell, also handles meta-held
+-- translate / resolve and forward to active cell, also handles meta-held
 	local sym, lutsym, consumed = keyboard:patch(iotbl)
 	if consumed then
 		return
@@ -463,23 +463,22 @@ end
 function pipeworld_postframe_pulse()
 end
 
--- a number of sources should be linked to the outgoing display size
-function pipeworld_display_state(status)
-	if valid_vid(cfg.wallpaper) then
-		if cfg.wallpaper_update then
-			cfg.wallpaper_update(cfg.wallpaper, cfg, VRESW, VRESH)
-		end
-	end
+function pipeworld_force_size(w, h, vppcm, hppcm)
+	VRESW = w
+	VRESH = h
+	VPPCM = vppcm
+	HPPCM = hppcm
 
-	resize_video_canvas(VRESW, VRESH)
-	resize_image(input_underlay, VRESW, VRESH)
+	run_action("/resize/canvas", w, h, vppcm, hppcm)
+	resize_video_canvas(w, h)
+	resize_image(input_underlay, w, h)
 
 -- also specify that the world density has changed
-	rendertarget_reconfigure(WORLDID, VPPCM, HPPCM)
+	rendertarget_reconfigure(WORLDID, vppcm, hppcm)
 
-	wm:resize(VRESW, VRESH)
 -- some shaders need to reload defaults as well
 	mouse_querytarget(WORLDID)
+
 	shader_rescan(
 	function(name, key, value, shtbl)
 		local shdr = cfg.shader_overrides[name]
@@ -492,6 +491,13 @@ function pipeworld_display_state(status)
 -- and some tools might need to rebuild
 	for _, v in ipairs(tool_hooks) do
 		v(wm, "resize", VRESW, VRESH)
+	end
+end
+
+-- this might get hijacked by a multidisplay tool
+function pipeworld_display_state(status)
+	if not cfg.lock_size then
+		pipeworld_force_size(VRESW, VRESH, VPPCM, HPPCM)
 	end
 end
 
