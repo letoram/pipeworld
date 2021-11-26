@@ -202,6 +202,9 @@ return
 -- see ARCAN_ARG=help afsrv_terminal
 	terminal_arg = "",
 
+-- allow each terminal to spawn new clients
+	terminal_listen = true,
+
 -- configurable option for the expression cell
 	expression_history = 100, -- remember last n expressions
 	expression_unfocus_reset = true, -- update expression contents on focus change
