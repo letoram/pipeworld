@@ -192,6 +192,23 @@ local function set_label(row, message)
 			dblclick = function()
 				row.cells[row.selected_index]:ignore_scale()
 			end,
+			over = function()
+				if not row.cells[row.selected_index].scale_ignore then
+					local cover = color_surface(1, 1, unpack(row.cfg.colors.rowlbl_hl))
+					link_image(cover, row.label, ANCHOR_UL, ANCHOR_SCALE_WH)
+					blend_image(cover, row.cfg.colors.rowlbl_hl[4])
+					image_inherit_order(cover, true)
+					order_image(cover, 1)
+					row.highlight_bg = cover
+					image_mask_set(cover, MASK_UNPICKABLE)
+				end
+			end,
+			out = function()
+				if valid_vid(row.highlight_bg) then
+					delete_image(row.highlight_bg)
+					row.highlight_bg = nil
+				end
+			end,
 -- careful to not rely on cached cell here as the label mouse-handler will live longer
 			drag = function(_, vid, dx, dy)
 				drag_state = label_drag(row.cells[row.selected_index], false)

@@ -11,3 +11,4 @@ minor:
  - temporarily disable autopan when WM anchor is being dragged around
  - anchoring / layouting fixes
  - lexer: hex/binary input confusion
+ - ui: added on-over indicator to row label to highlight interactivity
