@@ -45,6 +45,7 @@ end
 
 local menus = {}
 local function build_menu(group)
+	print("building menu for ", group)
 	if not menus[group] then
 		local fun = system_load("menus/" .. group .. ".lua", false)
 		if fun then
@@ -614,6 +615,58 @@ function(ctx, neww, newh, vppcm, hppcm)
 		cfg.wallpaper_update(cfg.wallpaper, cfg, neww, newh)
 	end
 	ctx:resize(neww, newh)
+end
+
+cmdtree["/clipboard/paste_preview"] =
+function(ctx)
+	local pr, pc = ensure_row_cell(ctx)
+	if not pr or not pc then
+		return
+	end
+
+	local msg = pipeworld_clipboard().globals[1]
+	if not msg or #msg == 0 then
+		return
+	end
+
+	msg = string.gsub(msg, "\"", "\\\"")
+
+	local cell = ctx:popup_cell("Cell", "expression", "paste(\"" .. msg .. "\")", false, ".")
+	if cell then
+		cell.eval_proxy = pc
+		cell.destroy_on_escape = true
+	end
+end
+
+cmdtree["/clipboard/copy"] =
+function(ctx, msg, outtype)
+	local cb = pipeworld_clipboard()
+
+	if not msg then
+		local _, cell = ensure_row_cell(ctx)
+		if not cell then
+			return
+		end
+
+		if cell.last_str then
+			msg = cell.last_str
+		elseif cell.clipboard then
+			msg = cb:list_local(cell.clipboard)[1]
+		end
+	end
+
+	if msg then
+		pipeworld_clipboard():set_global(msg,
+			"/clipboard/copy", outtype and outtype or "text/plain")
+	end
+end
+
+cmdtree["/clipboard/paste"] =
+function(ctx, msg)
+	local _, cell = ensure_row_cell(ctx)
+	if cell and cell.paste then
+		cell:paste(pipeworld_clipboard().globals[1])
+	end
 end
 
 cmdtree["/resynch"] =
