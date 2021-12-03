@@ -62,7 +62,8 @@ symtable,
 	["m1_m2_KP_PLUS"] = {group = {{"/scale/group/increment", 0.1}}},
 	["m1_m2_KP_MINUS"] = {group = {{"/scale/group/decrement", 0.1}}},
 	["m1_m2_KP_MULTIPLY"] = {group = {{"/scale/group/toggle"}}},
-
+	["m1_c"] = "/clipboard/copy",
+	["m1_v"] = "/clipboard/paste",
   ["m1_z"] = "/link/row",
 
 -- size modifies scale factor for presentation (forced)

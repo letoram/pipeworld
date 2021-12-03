@@ -2,6 +2,12 @@
  - expose target cell creation through the creation anchor point menu
  - add commands for /swap/row/up /swap/row/down, /swap/cell/left, /swap/cell/right
  - terminal cell opens up listening endpoints by default, new clients attach on the same row
+ - flair, set border/shadow/cursor color based on wallpaper
+ - add row api scope and popup (command: /popup/cursor/rowexpr)
+ - add support for attaching / detaching rows, cells (/swap/cell,row/up,down,left,right)
+ - add /clipboard/copy, /clipboard/paste commands
 
 minor:
  - temporarily disable autopan when WM anchor is being dragged around
+ - anchoring / layouting fixes
+ - lexer: hex/binary input confusion

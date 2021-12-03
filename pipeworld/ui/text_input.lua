@@ -41,6 +41,7 @@ local function text_input_table(ctx, io, sym)
 
 	ctx.oldmsg = ctx.msg;
 	ctx.oldpos = ctx.caretpos;
+	local nch
 	ctx.msg, nch = string.insert(ctx.msg, keych, ctx.caretpos, ctx.nchars);
 
 	ctx.caretpos = ctx.caretpos + nch;
