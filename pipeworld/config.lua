@@ -8,6 +8,7 @@ return
 	colors = {
 		background = {64, 64, 64, 1},
 		popup_bg = {0xfd, 0xf4, 0xc1},
+		rowlbl_hl = {160, 218, 169, 0.4},
 
 -- active hits the row that is currently active, passive applies to all other
 		active =
