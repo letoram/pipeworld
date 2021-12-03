@@ -10,6 +10,13 @@ function()
 		},
 		{
 			label = "Command-Line", command = "/append/row/cli"
+		},
+		{
+			label = "Target...", command = "/popup/target_menu",
+			eval =
+			function()
+				return #list_targets() > 0
+			end
 		}
 	}
 end
