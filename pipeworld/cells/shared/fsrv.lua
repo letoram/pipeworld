@@ -110,6 +110,36 @@ local function on_motion(ctx, vid, x, y)
 	})
 end
 
+local function clipboard_paste(cell, msg)
+	if not valid_vid(cell.vid, TYPE_FRAMESERVER) then
+		return
+	end
+
+	if not valid_vid(cell.clipboard_out) then
+		cell.clipboard_out =
+			define_nulltarget(cell.vid, "clipboard",
+				function(source, status)
+					if status.kind == "terminated" then
+						delete_image(source)
+						cell.clipboard_out = nil
+					end
+				end
+			)
+	end
+
+-- allocation might have failed
+	if not valid_vid(cell.clipboard_out) then
+		return
+	end
+
+-- more type specific work should be done here, for large streams we should
+-- open_nonblock into the clipboard and forward the type that way, then just
+-- schedule a callback:ed write
+	if (msg and string.len(msg) > 0) then
+		target_input(cell.clipboard_out, msg)
+	end
+end
+
 return function(cell, vid)
 	resize_image(vid, 1, 1)
 	cell:set_content(vid)
@@ -119,6 +149,7 @@ return function(cell, vid)
 		motion = on_motion
 	}
 
+	cell.paste = clipboard_paste
 	cell.input_labels = {}
 	cell.input_syms = {}
 

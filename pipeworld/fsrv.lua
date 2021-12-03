@@ -3,6 +3,10 @@ local apply_default_cell = system_load("cells/shared/fsrv.lua")()
 local apply_wl_cell = system_load("cells/shared/wayland.lua")()
 local clipboard = system_load("builtin/clipboard.lua")()
 
+function pipeworld_clipboard()
+	return clipboard
+end
+
 local function ensure_colorscheme(scheme, vid)
 	if not scheme_cache[scheme] then
 		local stat, msg =
@@ -309,6 +313,8 @@ local function fsrv_resized(cell, source, status)
 end
 
 local function fsrv_cstate(cell, source, status)
+	cell.content = status
+
 	if status.max_w == 0 or status.max_h == 0 then
 			return
 		end

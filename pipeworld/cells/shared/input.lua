@@ -194,6 +194,20 @@ local function recolor(cell)
 	blend_image(cell.box, col.input_background[4])
 end
 
+local function append_str(cell, msg)
+	if type(msg) == "string" then
+		local rl = cell.readline
+		if rl then
+			local nch
+			rl.msg, nch = string.insert(rl.msg, msg, rl.caretpos)
+			rl.caretpos = rl.caretpos + nch
+			update_str(cell, rl:view_str())
+		else
+			cell:force_str(msg)
+		end
+	end
+end
+
 return
 function(id, row, cfg)
 	local cell = pipeworld_cell_template(id, row, cfg)
@@ -214,6 +228,7 @@ function(id, row, cfg)
 	cell.update_label = update_str
 	cell.lock_input = input_lock
 	cell.force_str = force_str
+	cell.paste = append_str
 
 	link_image(cell.line, cell.bg)
 	link_image(cell.box, cell.line, ANCHOR_UL)

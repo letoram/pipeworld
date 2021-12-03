@@ -549,6 +549,14 @@ local function cell_drop_encoder(cell, ref)
 	end
 end
 
+local function clip_copy(cell)
+-- default doesn't do anything, input.lua and fsrv adds more
+end
+
+local function clip_paste(cell, src)
+-- same as with copy
+end
+
 function pipeworld_cell_template(name, row, cfg)
 	local bg = null_surface(1, 1)
 	image_clip_on(bg, CLIP_SHALLOW, row.bg)
