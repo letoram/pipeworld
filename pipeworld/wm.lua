@@ -492,6 +492,23 @@ local function swap_rows(wm, r1_i, r2_i, dt, interp)
 	wm:relayout(dt, interp)
 end
 
+local function set_rendertarget(wm, rtgt)
+	local set = {}
+	local oldrt = wm.rtgt
+
+	local set = rendertarget_vids(oldrt)
+	wm.rtgt = rtgt
+
+	for _, v in ipairs(set) do
+		rendertarget_attach(wm.rtgt, v, RENDERTARGET_DETACH)
+	end
+end
+
+local function set_active(wm)
+	set_context_attachment(wm.rtgt)
+	mouse_querytarget(wm.rtgt)
+end
+
 return
 function(anchor, cfg)
 	assert(valid_vid(anchor))
@@ -514,8 +531,11 @@ function(anchor, cfg)
 	tags     = {},
 	w = VRESW,
 	h = VRESH,
+	rtgt = WORLDID,
 	group_count = 1,
 	resize   = ctx_resize,
+	set_active = set_active,
+	set_rendertarget = set_rendertarget,
 	set_interactive = set_interactive,
 -- counter used for reset() state/content tracking
 	clock    = 0,

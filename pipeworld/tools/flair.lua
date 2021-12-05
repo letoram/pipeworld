@@ -269,13 +269,13 @@ local mouse_shid = build_shader(nil,
 local events = {}
 events.create =
 function(wm)
-	local glow = alloc_surface(VRESW, VRESH)
+	local glow = alloc_surface(wm.w, wm.h)
 	if not valid_vid(glow) then
 		return
 	end
 
-	local blurw = VRESW * blur_factor_w
-	local blurh = VRESH * blur_factor_h
+	local blurw = wm.w * blur_factor_w
+	local blurh = wm.h * blur_factor_h
 	local blur = alloc_surface(blurw, blurh)
 	if not valid_vid(blur) then
 		delete_image(glow)
@@ -287,8 +287,8 @@ function(wm)
 	local f = 1.0 / 255.0;
 
 	shader_uniform(mouse_shid, "remap", "ffff", 1.0, 1.0, 0.0, 0.0);
-	shader_uniform(mouse_shid, "width", "f", VRESW);
-	shader_uniform(mouse_shid, "height", "f", VRESH);
+	shader_uniform(mouse_shid, "width", "f", wm.w);
+	shader_uniform(mouse_shid, "height", "f", wm.h);
 	shader_uniform(mouse_shid, "outline_dark", "fff", d[1] * f, d[2] * f, d[3] * f);
 	shader_uniform(mouse_shid, "outline_bright", "fff", b[1] * f, b[2] * f, b[3] * f);
 
@@ -301,8 +301,8 @@ function(wm)
 	shader_uniform(glow_shader, "weight", "ffff", 1.0, 1.0, 1.0, 1.0)
 
 	local mix_shader = build_shader(nil, blur_mix, "flair_mix")
-	shader_uniform(mix_shader, "width", "f", VRESW)
-	shader_uniform(mix_shader, "height", "f", VRESH)
+	shader_uniform(mix_shader, "width", "f", wm.w)
+	shader_uniform(mix_shader, "height", "f", wm.h)
 
 	local boxblur = build_shader(boxblur_vert, boxblur_frag, "box_blur")
 	shader_uniform(boxblur, "radius", "f", 0.5)
@@ -316,7 +316,7 @@ function(wm)
 
 -- so for the basic glow texture we need a 1:1 size match between the two
 -- linktargets or there will not be enough resolution to 'fit' the others
-	define_linktarget(glow, WORLDID,
+	define_linktarget(glow, wm.rtgt,
 		RENDERTARGET_NOSCALE, -1, bit.bor(RENDERTARGET_COLOR, RENDERTARGET_ALPHA))
 
 	image_shader(glow, boxblur, SHADER_DOMAIN_RENDERTARGET_HARD)
@@ -331,7 +331,7 @@ function(wm)
 -- to their current position indepedent of rendertarget processing order
 -- then, we draw with the actual 'blurred rectangle shader' on the second
 -- pass
-		local vids = rendertarget_vids(WORLDID)
+		local vids = rendertarget_vids(wm.rtgt)
 		for k,v in ipairs(vids) do
 			image_surface_resolve(v)
 		end
@@ -417,8 +417,8 @@ function(wm, dx, dy)
 	end
 
 	shader_uniform(mouse_shid, "remap", "ffff", fx, fy, ox, oy)
-	shader_uniform(mouse_shid, "width", "f", VRESW)
-	shader_uniform(mouse_shid, "height", "f", VRESH)
+	shader_uniform(mouse_shid, "width", "f", wm.w)
+	shader_uniform(mouse_shid, "height", "f", wm.h)
 end
 
 local function event_handler(wm, event, ...)
@@ -544,6 +544,8 @@ function(wm)
 
 -- intercept any wallpaper set
 	wm.cmdtree["/wallpaper/set"] = wallpaper_set
+
+-- intercept rendertarget redirection and use to rebuild ourselves
 
 -- command for loading theme goes here
 	return event_handler
