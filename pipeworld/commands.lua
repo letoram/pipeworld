@@ -45,7 +45,6 @@ end
 
 local menus = {}
 local function build_menu(group)
-	print("building menu for ", group)
 	if not menus[group] then
 		local fun = system_load("menus/" .. group .. ".lua", false)
 		if fun then
