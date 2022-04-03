@@ -423,7 +423,12 @@ local function mode_check(cell, msg)
 	local stable = cell_symbol
 
 	if mode == "!" and not cell.force_ns then
-		cell.row.wm:replace_cell(cell, "cli", rest)
+		if (rest == "lash") then
+			cell.row.wm:replace_cell(cell, "cli",
+				cell.cfg.terminal_size[1], cell.cfg.terminal_size[2], "cli=lua")
+		else
+			cell.row.wm:replace_cell(cell, "cli", rest)
+		end
 		return
 
 	elseif mode == "#" and not cell.force_ns then
