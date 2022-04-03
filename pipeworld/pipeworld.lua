@@ -36,7 +36,7 @@ end
 -- this ignores the normal pipeworld grab input chain
 function pipeworld_popup_capture(anchor, cancel)
 -- custom cursor for the current selection add a mouse grab surface
-	local grab = null_surface(VRESW, VRESH)
+	local grab = null_surface(wm.w, wm.h)
 	link_image(grab, anchor)
 	image_mask_clear(grab, MASK_POSITION)
 
@@ -77,9 +77,9 @@ function pipeworld_popup_capture(anchor, cancel)
 end
 
 function pipeworld_grab_input(ref, new_grab)
-
 -- tries to modify grab someone else has
 	if input_grab_ref and input_grab_ref ~= ref then
+--		print("grab violation", debug.traceback())
 		return input_grab_ref, input_grab
 	end
 
@@ -267,7 +267,7 @@ function pipeworld(args)
 
 -- always run with a color, config can allow something more refined
 	image_color(WORLDID, unpack(cfg.colors.background))
-	cfg.wallpaper = system_load("wallpaper.lua")()(cfg)
+	cfg.wallpaper = system_load("wallpaper.lua")()(wm, cfg)
 	show_image(cfg.wallpaper)
 
 -- and a set of preset paths into the wm that the keybindings attach to
