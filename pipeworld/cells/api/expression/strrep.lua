@@ -7,7 +7,7 @@ return function(types)
 		handler = strrep,
 		args = {types.STRING, types.STRING, types.NUMBER},
 		names = {"input", "count"},
-		argc = 3,
+		argc = 2,
 		help = "Repeat text input a fixed number of times",
 		type_helper = {}
 	}
