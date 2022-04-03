@@ -49,7 +49,7 @@ local function update_pan(cfg, anchor, w, h)
 end
 
 return
-function(cfg)
+function(wm, cfg)
 	local res = cfg.wallpaper
 
 	if res == nil then
@@ -68,7 +68,7 @@ function(cfg)
 
 		timer_add_periodic("pan_synch", 1, false,
 			function()
-				update_pan(cfg, anchor, VRESW, VRESH)
+				update_pan(cfg, anchor, wm.w, wm.h)
 			end, false
 		)
 	elseif cfg.wallpaper_pan == "parallax" then
@@ -76,7 +76,7 @@ function(cfg)
 		cfg.wallpaper_update = update_fit
 	end
 
-	wallpaper = null_surface(VRESW, VRESH)
+	wallpaper = null_surface(wm.w, wm.h)
 	image_mask_set(wallpaper, MASK_UNPICKABLE)
 	image_tracetag(wallpaper, "wallpaper")
 
@@ -90,7 +90,7 @@ function(cfg)
 
 		image_sharestorage(vid, wallpaper)
 		delete_image(vid)
-		cfg.wallpaper_update(wallpaper, cfg, VRESW, VRESH)
+		cfg.wallpaper_update(wallpaper, cfg, wm.w, wm.h)
 	end
 
 	return wallpaper
