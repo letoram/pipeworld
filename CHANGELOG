@@ -1,14 +1,24 @@
-0.1:
+0.2:
+ - switched default visual for the release, credit to: iremembernoname
  - expose target cell creation through the creation anchor point menu
  - add commands for /swap/row/up /swap/row/down, /swap/cell/left, /swap/cell/right
  - terminal cell opens up listening endpoints by default, new clients attach on the same row
+ - expression -> cli cell, set !lash to switch to lash mode
  - flair, set border/shadow/cursor color based on wallpaper
  - add row api scope and popup (command: /popup/cursor/rowexpr)
  - add support for attaching / detaching rows, cells (/swap/cell,row/up,down,left,right)
- - add /clipboard/copy, /clipboard/paste commands
+ - add /clipboard/copy, /clipboard/paste, /clipbaord/paste_preview
+ - add system:keyboard_layout function
+ - add cell:paste function
 
 minor:
  - temporarily disable autopan when WM anchor is being dragged around
  - anchoring / layouting fixes
  - lexer: hex/binary input confusion
  - ui: added on-over indicator to row label to highlight interactivity
+ - fix to strrep
+ - rowlabel on-mouse over highlight
+ - auto-resize on display (windowed mode) change
+ - passive shader state erroneously blocked on row shader
+ - cell:input autosize to contents on commit
+ - lexer fixes for hex/bin 0b in 0x0b
