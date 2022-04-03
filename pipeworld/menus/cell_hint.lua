@@ -7,6 +7,7 @@ local function pxhint(cell, w, h)
 	local oh = cell.fsrv_size[2]
 	cell.fsrv_size[1] = w
 	cell.fsrv_size[2] = h
+
 	cell:rehint()
 
 -- need to reset and wait so that input scaling and so on still applies
@@ -23,7 +24,7 @@ function(ctx, row, cell)
 	local mod_w = 1
 	local mod_h = 1
 
-	if cell.name == "terminal" or cell.name == "tui" then
+	if cell.name == "terminal" or cell.name == "tui" or cell.name == "cli" then
 		mod_w = cell.fonthint_wh[1]
 		mod_h = cell.fonthint_wh[2]
 	end

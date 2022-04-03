@@ -11,7 +11,7 @@ create one (tag it with 'enhancement' and make sure the name match the matter
 in IDEAS.md).
 
 In most cases you will need to use the scripting API of arcan itself. The set
-of functions and documentation/examples thereof can be found in doc/*.lua part
+of functions and documentation/examples thereof can be found in doc/\*.lua part
 of the arcan source repository.
 
 Generic
