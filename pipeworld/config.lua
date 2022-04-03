@@ -7,8 +7,8 @@ return
 -- r(0..255), g(0..255), b(0..255), a(0..1)
 	colors = {
 		background = {64, 64, 64, 1},
-		popup_bg = {0xfd, 0xf4, 0xc1},
 		rowlbl_hl = {160, 218, 169, 0.4},
+		popup_bg = {64, 64, 64},
 
 -- active hits the row that is currently active, passive applies to all other
 		active =
@@ -16,13 +16,13 @@ return
 			opacity = 1.0,
 			caret = {245, 223, 77, 1}, -- 'illuminating'
 			row_bg = {64, 64, 64, 1},
-			row_border = {245, 223, 77, 1}, -- 'illuminating'
+			row_border = {0xdc, 0xb2, 0xb3, 1},
 			cell_dead = {128, 32, 32, 1},
 			cell_passive = {32, 32, 32, 1},
-			cell_processing = {160, 218, 169, 1}, -- 'green ash'
+			cell_processing = {0x50, 0xfa, 0x7b, 1}, -- 'green ash'
 			cell_alert = {210, 56, 108, 1}, -- 'raspberry sorbet'
 			cell_completed = {210, 56, 108, 1},
-			cell_selected = {245, 223, 77, 1}, -- 'illuminating'
+			cell_selected = {0xcc, 0xa2, 0xa3, 1},
 			input_background = {0, 0, 0, 0.5},
 			selection_bg = {155, 183, 212, 1} -- 'cerulean'
 		},
@@ -30,17 +30,16 @@ return
 		passive =
 		{
 			opacity = 1.0,
-			opacity = 0.7,
 			row_bg = {64, 64, 64, 1},
-			row_border = {96, 96, 96, 1},
-			cell_passive = {147, 149, 151, 1},
-			cell_dead = {32, 96, 32, 1},
-			cell_processing = {0, 161, 112, 1}, -- 'mint'
+			row_border = {0, 0, 0, 1},
+			cell_passive = {36, 36, 36, 1},
+			cell_dead = {0, 0, 0, 1},
+			cell_processing = {0, 0, 0, 1}, -- 'mint'
 			cell_alert = {210, 56, 108, 1}, -- 'raspberry sorbet'
-			cell_selected = {32, 32, 32, 1},
-			cell_completed = {210, 56, 108, 1},
+			cell_selected = {96, 96, 96, 1},
+			cell_completed = {64, 64, 64, 1},
 			input_background = {0, 0, 0, 0.5},
-			selection_bg = {32, 127, 32, 1}
+			selection_bg = {64, 64, 64, 1}
 		},
 
 		cursor_outline_bright = {32, 32, 32},
@@ -49,20 +48,20 @@ return
 
 -- [cell_name _ colorscheme].lua will be loaded from colorschemes/
 -- (if present) and sent to the client on preroll
-	cli_colorscheme = "gruvbox-light",
-	terminal_colorscheme = "gruvbox-light",
-	tui_colorscheme = "gruvbox-light",
+	cli_colorscheme = "dracula",
+	terminal_colorscheme = "dracula",
+	tui_colorscheme = "dracula",
 
 -- will match a group/name/key entry in shaders/
 	shader_overrides = {
 		["ui_popup"] = {
-			bg_color = {61 / 255, 70 / 255, 61 / 255},
-			border_color = {245 / 255, 223 / 255, 77 / 255}
+			bg_color = {0x28 / 255, 0x2a / 255, 0x36/ 255},
+			border_color = {0xdc / 255, 0xb2 / 255, 0xb3 / 255},
 		}
 	},
 
 -- set to override the background color with a wallpaper or a shader
-	wallpaper = "backgrounds/scape.jpg",
+	wallpaper = "backgrounds/evening.jpg",
 
 -- options are fit, pan, parallax
 	wallpaper_pan = "pan",
@@ -124,16 +123,16 @@ return
 	row_height = 20,
 
 -- padding between each new row
-	row_spacing = 8,
+	row_spacing = 18,
 
 -- against left border of the screen (or new columns if multi-column)
 	row_margin = 8,
 
 -- border (px) around the entire row region
-	row_border = 2,
+	row_border = 0,
 
 -- padding (tldr) after the border
-	row_pad = {0, 0, 0, 0},
+	row_pad = {4, 4, 4, 4},
 
 -- border (px) around each cell within the row
 	cell_border = 2,
@@ -145,17 +144,17 @@ return
 	cell_alpha_hint = 210,
 	cell_alpha_hint_unfocus = 120,
 
-	font = "DejaVuSansMono.ttf",
+	font = "monoOne.otf",
 	font_sz = 12,
 	font_hint = 2,
 	input_format = "\\f%s,%d\\#fff5df",
 
-	popup_text_valid = "\\f,0\\#ffffff",
-	popup_text_invalid = "\\f,0\\#777777",
+	popup_text_valid = "\\f,0\\#dcb2b3",
+	popup_text_invalid = "\\f,0\\#dcb2b3",
 
-	label_format = "\\fDejaVuSansMono.ttf,12\\#000647",
-	label_maximized_format = "\\fDejaVuSansMono.ttf,14\\#ffffff",
-	label_unfocus_format = "\\fDejaVuSansMono.ttf,12\\#000647",
+	label_format = "\\fmonoOne.otf,12\\#dcb2b3",
+	label_maximized_format = "\\fmonoOne.otf,14\\#ffffff",
+	label_unfocus_format = "\\fmonoOne.otf,12\\#000647",
 
 -- defined in suppl.lua (suppl_ptn_expand)
 -- %a = address, %t = tag, %T title, if a % does not exist, the previous
@@ -185,7 +184,8 @@ return
 	cell_wrap = "/select/down",
 	row_wrap = "/insert/row/expression",
 
--- default terminal dimensions (in cells) used for a newly spawned terminal
+-- default terminal dimensions (in cells) used for a newly spawned
+-- terminal or for a lash style cli
 	terminal_size = {80, 25},
 
 -- default resolution (pixels) for generic media/vm/game/... contents
@@ -196,7 +196,7 @@ return
 
 -- set to empty for builtin/bitmap, additional fonts will be used for fallback
 -- when a glyph is missing, mainly symbols/emoji/...
-	terminal_font = {"DejaVuSansMono.ttf"},
+	terminal_font = {"monoOne.otf"},
 	terminal_font_sz = 10,
 	terminal_font_hint = 2,
 
