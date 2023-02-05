@@ -778,10 +778,15 @@ local function input_symbol(cell, sym, lutsym, ch)
 
 	elseif sym == "TAB" then
 		if cell.input_locked then
+			if not cell.content or type(cell.content[1]) ~= "number" then
+				return
+			end
+
 			cell.format_index = cell.format_index + 1
 			if cell.format_index > #cell.number_formats then
 				cell.format_index = 1
 			end
+
 			local nf = cell.number_formats[cell.format_index]
 			cell:update_label(nf.process(cell.content[1]))
 			cell.title = nf.label .. (cell.expression and cell.expression or "")
