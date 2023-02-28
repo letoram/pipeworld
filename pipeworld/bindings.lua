@@ -1,6 +1,7 @@
 local symtable = system_load("builtin/keyboard.lua")()
-symtable.meta_1_sym = "RCTRL"
-symtable.meta_2_sym = "LSHIFT"
+symtable:load_translation()
+symtable:load_keymap("default.lua")
+symtable:kbd_repeat()
 
 -- a single key is used for simple paths ["m1_mykey"] = "/something/simple"
 -- a table is used to forward arguments ["m1_mykey"] = {"/something/less/simple", 0.1, 0.2},
@@ -56,7 +57,7 @@ symtable,
 	["m1_s"] = "/popup/cursor/sysexpr",
 	["m1_d"] = "/popup/cursor/cellexpr",
 	["m1_a"] = "/popup/cursor/rowexpr",
-	["m1_RETURN"] = {"/insert/row/expression"},
+	["m1_RETURN"] = {group = {"/insert/row/expression", "/pan/focus"}},
 	["m1_r"] = "/reset/cell",
 	["m1_m2_r"] = "/reset/anchor",
 	["m1_m2_KP_PLUS"] = {group = {{"/scale/group/increment", 0.1}}},
@@ -64,7 +65,7 @@ symtable,
 	["m1_m2_KP_MULTIPLY"] = {group = {{"/scale/group/toggle"}}},
 	["m1_c"] = "/clipboard/copy",
 	["m1_v"] = "/clipboard/paste",
-  ["m1_z"] = "/link/row",
+	["m1_z"] = "/link/row",
 
 -- size modifies scale factor for presentation (forced)
 	["m1_F1"] = {group = {{"/scale/row/set", 0.2, 0.2}}},

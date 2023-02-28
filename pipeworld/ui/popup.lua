@@ -77,6 +77,9 @@ _G[APPLID] = function (arguments)
 	end
 
 	SYMTABLE = system_load("builtin/keyboard.lua")()
+	SYMTABLE:load_translation()
+	SYMTABLE:load_keymap("default.lua")
+	SYMTABLE:kbd_repeat()
 
 -- simple border example, just adds a fill-rate burning double+ csurf
 	local popup = spawn_popup(list, {

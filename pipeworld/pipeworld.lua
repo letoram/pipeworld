@@ -225,13 +225,6 @@ function pipeworld(args)
 	system_load("fsrv.lua")()                     -- default dispatch handler used by cells
 	spawn_popup = system_load("ui/popup.lua")()
 
--- only partially continue long enough for a somewhat clean exit
-	if not keyboard.version or keyboard.version < 1 then
-		warning("old builtin/keyboard.lua - need newer upstream arcan")
-		pipeworld_tick = nil
-		shutdown("arcan version too old", EXIT_FAILURE)
-	end
-
 	setup_mouse_support()
 
 -- expose possible handlers for wm invalidation
@@ -319,7 +312,7 @@ function pipeworld_get_symtable()
 end
 
 local function process_keybind(iotbl)
-	local sym = keyboard[iotbl.keysym]
+	local sym = keyboard.tolabel(iotbl.keysym)
 	if not sym then
 		return false
 	end
@@ -431,11 +424,8 @@ function pipeworld_input(iotbl)
 		return
 	end
 
--- translate / resolve and forward to active cell, also handles meta-held
-	local sym, lutsym, consumed = keyboard:patch(iotbl)
-	if consumed then
-		return
-	end
+-- translate / resolve and forward to active cell
+	local sym, lutsym = keyboard:patch(iotbl)
 
 	if process_keybind(iotbl) then
 		return
