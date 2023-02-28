@@ -6,12 +6,12 @@ local function index_to_label(ind)
 		'U', 'V', 'W', 'X', 'Y', 'Z'
 	}
 
-	local conv =
-	function(num, base)
-		if num < base then
+	local conv
+	conv = function(num, base)
+		if num <= base then
 			return lut[num]
 		else
-			return conv(math.floor(num / base), base) .. lut[num % base]
+			return conv(math.floor((num - 1) / base), base) .. lut[1 + (num - 1) % base]
 		end
 	end
 
